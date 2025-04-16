@@ -67,6 +67,12 @@ namespace MyWebAPI.Data
                 .HasOne(up => up.Product)
                 .WithMany(p => p.UserProducts)
                 .HasForeignKey(up => up.ProductId);
+
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Category)
+                .WithMany(c => c.Products)
+                .HasForeignKey(p => p.CategoryId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }
