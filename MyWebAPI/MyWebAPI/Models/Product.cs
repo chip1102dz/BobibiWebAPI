@@ -13,7 +13,9 @@
         public required string Name { get; set; }
         public double Price { get; set; }
         public int Sale { get; set; }
-        public required Dictionary<string, ProductRating> Rating { get; set; }
-        public required ICollection<UserProduct> UserProducts { get; set; }
+        public ICollection<ProductRating> Ratings { get; set; } = new List<ProductRating>();
+        public ICollection<UserProduct> UserProducts { get; set; } = new List<UserProduct>();
+        public ICollection<ProductOrder> ProductOrders { get; set; } = new List<ProductOrder>();
     }
+
 }

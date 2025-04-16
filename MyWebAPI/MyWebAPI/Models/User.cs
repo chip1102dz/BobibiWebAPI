@@ -10,7 +10,7 @@
         public required String ShopName { get; set; }
         public required String ShopAddress { get; set; }
         public required String Avatar { get; set; }
-        public required List<Order> Orders { get; set; }
-        public required ICollection<UserProduct> UserProducts { get; set; }
+        public ICollection<Order> Orders { get; set; } = new List<Order>();
+        public ICollection<UserProduct> UserProducts { get; set; } = new List<UserProduct>();
     }
 }

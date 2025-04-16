@@ -8,6 +8,6 @@
         public required string Name { get; set; }
         public required string Phone { get; set; }
         public bool Selected { get; set; }
-        public required string UserEmail { get; set; }
+        public required User User { get; set; }
     }
 }
