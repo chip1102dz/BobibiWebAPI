@@ -7,67 +7,66 @@ namespace MyWebAPI.Data
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
-        // DbSet cho các bảng
         public DbSet<User> Users { get; set; }
-        public DbSet<Address> Addresses { get; set; }
-        public DbSet<Category> Categories { get; set; }
-        public DbSet<Feedback> Feedbacks { get; set; }
-        public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<ProductOrder> ProductOrders { get; set; }
-        public DbSet<UserProduct> UserProducts { get; set; }
         public DbSet<Voucher> Vouchers { get; set; }
+        public DbSet<ProductRating> ProductRatings { get; set; }
+        public DbSet<UserProduct> UserProducts { get; set; }
+        public DbSet<ProductOrder> ProductOrders { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<Feedback> Feedbacks { get; set; }
+        public DbSet<Address> Addresses { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Cấu hình khóa chính kết hợp cho bảng UserProduct
+            base.OnModelCreating(modelBuilder);
+
+            // Định nghĩa các quan hệ nhiều-nhiều
             modelBuilder.Entity<UserProduct>()
                 .HasKey(up => new { up.UserId, up.ProductId });
 
-            // Cấu hình khóa chính cho ProductOrder nếu cần (nếu dùng Id riêng thì không cần)
-            // modelBuilder.Entity<ProductOrder>()
-            //     .HasKey(po => new { po.OrderId, po.ProductId });
+            modelBuilder.Entity<ProductOrder>()
+                .HasKey(po => new { po.OrderId, po.ProductId });
 
-            // Cấu hình quan hệ một-nhiều giữa User và Order
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.ProductOrders)
+                .WithOne(po => po.Order)
+                .HasForeignKey(po => po.OrderId);
+
+            modelBuilder.Entity<Product>()
+                .HasMany(p => p.ProductOrders)
+                .WithOne(po => po.Product)
+                .HasForeignKey(po => po.ProductId);
+
+            // Định nghĩa quan hệ giữa User và Address
+            modelBuilder.Entity<User>()
+                .HasOne(a => a.ShopAddress)
+                .WithMany(u => u.UserId)
+                .HasForeignKey(a => a.UserId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Định nghĩa quan hệ giữa Order và User
             modelBuilder.Entity<Order>()
                 .HasOne(o => o.User)
                 .WithMany(u => u.Orders)
-                .HasForeignKey(o => o.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .HasForeignKey(o => o.UserId);
 
-            // Quan hệ Order - Address
-            modelBuilder.Entity<Order>()
-                .HasOne(o => o.Address)
-                .WithMany()
-                .HasForeignKey(o => o.AddressId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // Định nghĩa quan hệ giữa ProductRating và Product
+            modelBuilder.Entity<ProductRating>()
+                .HasOne(pr => pr.Product)
+                .WithMany(p => p.Ratings)
+                .HasForeignKey(pr => pr.ProductId);
 
-            // Quan hệ ProductOrder - Order
-            modelBuilder.Entity<ProductOrder>()
-                .HasOne(po => po.Order)
-                .WithMany(o => o.ProductOrders)
-                .HasForeignKey(po => po.OrderId);
-
-            // Quan hệ ProductOrder - Product
-            modelBuilder.Entity<ProductOrder>()
-                .HasOne(po => po.Product)
-                .WithMany(p => p.ProductOrders)
-                .HasForeignKey(po => po.ProductId);
-
-            // Quan hệ UserProduct - User
+            // Định nghĩa quan hệ giữa User và Product
             modelBuilder.Entity<UserProduct>()
                 .HasOne(up => up.User)
                 .WithMany(u => u.UserProducts)
                 .HasForeignKey(up => up.UserId);
 
-            // Quan hệ UserProduct - Product
             modelBuilder.Entity<UserProduct>()
                 .HasOne(up => up.Product)
                 .WithMany(p => p.UserProducts)
                 .HasForeignKey(up => up.ProductId);
-
-            // Nếu dùng Dictionary cho Rating, EF Core không hỗ trợ trực tiếp.
-            // Bạn nên ánh xạ sang bảng khác nếu cần lưu trữ trong CSDL.
         }
     }
 }
