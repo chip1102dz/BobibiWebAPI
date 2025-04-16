@@ -15,5 +15,7 @@
         public required string UserEmail { get; set; }
         public int Voucher { get; set; }
         public required Address Address { get; set; }
+        public int UserId { get; set; }
+        public required User User { get; set; }
     }
 }

@@ -14,6 +14,6 @@
         public double Price { get; set; }
         public int Sale { get; set; }
         public required Dictionary<string, ProductRating> Rating { get; set; }
-
+        public required ICollection<UserProduct> UserProducts { get; set; }
     }
 }
