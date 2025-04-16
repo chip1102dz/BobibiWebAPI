@@ -16,7 +16,7 @@ namespace MyWebAPI.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Feedback> Feedbacks { get; set; }
         public DbSet<Address> Addresses { get; set; }
-
+        public DbSet<Category> Categories { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -39,9 +39,9 @@ namespace MyWebAPI.Data
                 .HasForeignKey(po => po.ProductId);
 
             // Định nghĩa quan hệ giữa User và Address
-            modelBuilder.Entity<User>()
-                .HasOne(a => a.ShopAddress)
-                .WithMany(u => u.UserId)
+            modelBuilder.Entity<Address>()
+                .HasOne(a => a.User)
+                .WithMany(u => u.Addresses)
                 .HasForeignKey(a => a.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
 
