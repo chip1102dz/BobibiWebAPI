@@ -43,7 +43,8 @@ namespace MyWebAPI.Data
                 .HasOne(a => a.User)
                 .WithMany(u => u.Addresses)
                 .HasForeignKey(a => a.UserId)
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.Restrict);
+
 
             // Định nghĩa quan hệ giữa Order và User
             modelBuilder.Entity<Order>()
